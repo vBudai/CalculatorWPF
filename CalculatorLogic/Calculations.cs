@@ -5,7 +5,8 @@ namespace CalculatorLogic
     public class Calculations
     {
 
-        private static int ReadOperand(string input, int i)
+        //Calculating length of number
+        private static int operandRead(string input, int i)
         {
             bool dflag = false;
             if (input[i] == '-')
@@ -30,21 +31,25 @@ namespace CalculatorLogic
             return i;
         }
 
+
+        //Calculating
         public static string Calculate(string input)
         {
-            string opnd1, opnd2, expr = input;
+            string opnd1, opnd2;
             char op = '\0';
             int i, n;
             double num1, num2, result = 0;
             input += '\0';
+
             while (true)
             {
                 i = 0;
                 n = 0;
-                i = ReadOperand(input, i);
+                i = operandRead(input, i);
+
                 if (i == -1)
                 {
-                    throw new Exception("Impossible to solve!");
+                    throw new Exception("Input error!");
                 }
                 if (input[i] is '\0')
                 {
@@ -57,56 +62,71 @@ namespace CalculatorLogic
                         break;
                     }
                 }
+
                 opnd1 = input[0..i];
+
                 if (string.IsNullOrEmpty(opnd1))
                 {
-                    throw new Exception("Impossible to solve");
+                    throw new Exception("Input error!");
                 }
+
                 op = input[i++];
+
                 if (op is not '+' and not '-' and not '*' and not '/')
                 {
-                    throw new Exception("Impossible to solve!");
+                    throw new Exception("Wrong operation!");
                 }
+
                 n = i;
-                i = ReadOperand(input, i);
+                i = operandRead(input, i);
+
                 if (i == -1)
                 {
-                    throw new Exception("Impossible to solve!");
+                    throw new Exception("Input error!");
                 }
-                opnd2 = input[(opnd1.Length + 1)..i];
+
+                opnd2 = input[n..i];
+
                 if (string.IsNullOrEmpty(opnd2))
                 {
-                    throw new Exception("Impossible to solve!");
+                    throw new Exception("Input error!");
                 }
+
+                //Priority of * and /
                 if (input[i] is '/' or '*')
                 {
                     op = input[i++];
                     n = i;
                     opnd1 = opnd2;
-                    i = ReadOperand(input, i);
+                    i = operandRead(input, i);
                     if (i == -1)
                     {
-                        throw new Exception("Impossible to solve!");
+                        throw new Exception("Input error!");
                     }
                     opnd2 = input[n..i];
                     if (string.IsNullOrEmpty(opnd2))
                     {
-                        throw new Exception("Impossible to solve!");
+                        throw new Exception("Input error!");
                     }
                 }
+
                 double.TryParse(opnd1, out num1);
                 double.TryParse(opnd2, out num2);
+
                 switch (op)
                 {
                     case '+':
                         result = num1 + num2;
                         break;
+
                     case '-':
                         result = num1 - num2;
                         break;
+
                     case '*':
                         result = num1 * num2;
                         break;
+
                     case '/':
                         result = num1 / num2;
                         break;
